@@ -217,10 +217,10 @@ const SettingsPage = () => {
                 <strong>Game Concept:</strong> Keval Patel
               </p>
               <p className="text-muted-foreground">
-                Development: AI Generated Game
+                Development: KP'S Creations
               </p>
               <p className="text-muted-foreground">
-                Special Thanks: Chess Community
+                Special Thanks: Keval Patel
               </p>
             </div>
           </Card>
