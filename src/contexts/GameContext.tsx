@@ -106,6 +106,16 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       
     case 'SELECT_SQUARE':
       const { position } = action;
+      
+      // Handle bounds checking - if invalid position, deselect
+      if (position.row < 0 || position.row > 7 || position.col < 0 || position.col > 7) {
+        return {
+          ...state,
+          selectedSquare: null,
+          validMoves: []
+        };
+      }
+      
       const piece = state.board[position.row][position.col];
       
       if (piece && piece.color === state.currentPlayer) {
