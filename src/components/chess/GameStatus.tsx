@@ -8,16 +8,26 @@ interface GameStatusProps {
   currentPlayer: PieceColor;
   gameMode: GameMode;
   isAIThinking?: boolean;
+  players?: {
+    white: string;
+    black: string;
+  };
 }
 
-const GameStatus = ({ status, currentPlayer, gameMode, isAIThinking }: GameStatusProps) => {
+const GameStatus = ({ status, currentPlayer, gameMode, isAIThinking, players }: GameStatusProps) => {
   const getStatusMessage = () => {
+    const currentPlayerName = players 
+      ? (currentPlayer === 'white' ? players.white : players.black)
+      : (currentPlayer === 'white' ? 'White' : 'Black');
+    
     switch (status) {
       case 'check':
-        return `${currentPlayer === 'white' ? 'White' : 'Black'} King is in Check!`;
+        return `${currentPlayerName} King is in Check!`;
       case 'checkmate':
-        const winner = currentPlayer === 'white' ? 'Black' : 'White';
-        return `Checkmate! ${winner} Wins!`;
+        const winnerName = players 
+          ? (currentPlayer === 'white' ? players.black : players.white)
+          : (currentPlayer === 'white' ? 'Black' : 'White');
+        return `Checkmate! ${winnerName} Wins!`;
       case 'stalemate':
         return 'Stalemate - Draw!';
       case 'draw':
@@ -26,7 +36,7 @@ const GameStatus = ({ status, currentPlayer, gameMode, isAIThinking }: GameStatu
         if (isAIThinking && currentPlayer === 'black') {
           return 'AI is thinking...';
         }
-        return `${currentPlayer === 'white' ? 'White' : 'Black'}'s Turn`;
+        return `${currentPlayerName}'s Turn`;
     }
   };
 
@@ -72,11 +82,25 @@ const GameStatus = ({ status, currentPlayer, gameMode, isAIThinking }: GameStatu
       className="mb-6 w-full max-w-md"
     >
       <Card className="p-4 bg-card/90 backdrop-blur border-accent/30 text-center">
-        {/* Game Mode */}
+        {/* Game Mode & Players */}
         <div className="flex items-center justify-center gap-2 mb-3 text-sm text-muted-foreground">
           {getGameModeIcon()}
           <span>{getGameModeText()}</span>
         </div>
+        
+        {/* Player Names */}
+        {players && (
+          <div className="flex justify-between mb-3 text-sm">
+            <div className={`flex items-center gap-2 ${currentPlayer === 'white' ? 'text-accent font-semibold' : 'text-muted-foreground'}`}>
+              <div className="w-3 h-3 rounded-full bg-gray-200 border border-gray-400"></div>
+              {players.white}
+            </div>
+            <div className={`flex items-center gap-2 ${currentPlayer === 'black' ? 'text-accent font-semibold' : 'text-muted-foreground'}`}>
+              {players.black}
+              <div className="w-3 h-3 rounded-full bg-gray-800 border border-gray-400"></div>
+            </div>
+          </div>
+        )}
 
         {/* Current Turn/Status */}
         <motion.div

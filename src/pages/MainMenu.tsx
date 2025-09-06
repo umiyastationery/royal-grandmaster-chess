@@ -4,11 +4,16 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
+import PlayerSetup from '@/components/game/PlayerSetup';
+import LoadGameDialog from '@/components/game/LoadGameDialog';
+import { GameMode } from '@/contexts/GameContext';
 
 const MainMenu = () => {
   const navigate = useNavigate();
   const { dispatch } = useGame();
   const [showAIOptions, setShowAIOptions] = useState(false);
+  const [showPlayerSetup, setShowPlayerSetup] = useState(false);
+  const [selectedMode, setSelectedMode] = useState<GameMode>('pvp');
 
   const menuItems = [
     {
@@ -19,10 +24,16 @@ const MainMenu = () => {
     {
       label: 'Player vs Player',
       action: () => {
-        dispatch({ type: 'START_GAME', mode: 'pvp' });
-        navigate('/game');
+        setSelectedMode('pvp');
+        setShowPlayerSetup(true);
       },
       description: 'Play against a friend locally'
+    },
+    {
+      label: 'Load Saved Game',
+      action: () => {}, // Handled by LoadGameDialog
+      description: 'Continue a previously saved game',
+      isLoadGame: true
     },
     {
       label: 'Rules of Chess',
@@ -36,15 +47,29 @@ const MainMenu = () => {
     }
   ];
 
-  const aiDifficulties = [
+  const aiDifficulties: { level: GameMode; label: string; description: string }[] = [
     { level: 'ai-easy', label: 'Easy', description: 'Perfect for beginners' },
     { level: 'ai-medium', label: 'Medium', description: 'Balanced challenge' },
     { level: 'ai-hard', label: 'Hard', description: 'For experienced players' }
   ];
 
-  const startAIGame = (difficulty: any) => {
-    dispatch({ type: 'START_GAME', mode: difficulty });
+  const startAIGame = (difficulty: GameMode) => {
+    setSelectedMode(difficulty);
+    setShowPlayerSetup(true);
+  };
+
+  const handleStartGame = (players: { white: string; black: string }) => {
+    dispatch({ type: 'START_GAME', mode: selectedMode, players });
     navigate('/game');
+  };
+
+  const handleLoadGame = () => {
+    navigate('/game');
+  };
+
+  const handleBack = () => {
+    setShowAIOptions(false);
+    setShowPlayerSetup(false);
   };
 
   return (
@@ -61,7 +86,7 @@ const MainMenu = () => {
           <p className="text-xl text-muted-foreground">Choose your battlefield</p>
         </motion.div>
 
-        {!showAIOptions ? (
+        {!showAIOptions && !showPlayerSetup ? (
           /* Main Menu Options */
           <div className="space-y-4">
             {menuItems.map((item, index) => (
@@ -71,19 +96,40 @@ const MainMenu = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card className="p-6 bg-card/80 backdrop-blur border-accent/20 hover:border-accent/50 transition-all duration-300 cursor-pointer menu-item"
-                      onClick={item.action}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-2xl font-semibold text-foreground mb-2">{item.label}</h3>
-                      <p className="text-muted-foreground">{item.description}</p>
+                {item.isLoadGame ? (
+                  <LoadGameDialog onGameLoaded={handleLoadGame}>
+                    <Card className="p-6 bg-card/80 backdrop-blur border-accent/20 hover:border-accent/50 transition-all duration-300 cursor-pointer menu-item w-full">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-2xl font-semibold text-foreground mb-2">{item.label}</h3>
+                          <p className="text-muted-foreground">{item.description}</p>
+                        </div>
+                        <div className="text-4xl text-accent opacity-70">♔</div>
+                      </div>
+                    </Card>
+                  </LoadGameDialog>
+                ) : (
+                  <Card className="p-6 bg-card/80 backdrop-blur border-accent/20 hover:border-accent/50 transition-all duration-300 cursor-pointer menu-item"
+                        onClick={item.action}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-2xl font-semibold text-foreground mb-2">{item.label}</h3>
+                        <p className="text-muted-foreground">{item.description}</p>
+                      </div>
+                      <div className="text-4xl text-accent opacity-70">♔</div>
                     </div>
-                    <div className="text-4xl text-accent opacity-70">♔</div>
-                  </div>
-                </Card>
+                  </Card>
+                )}
               </motion.div>
             ))}
           </div>
+        ) : showPlayerSetup ? (
+          /* Player Setup */
+          <PlayerSetup
+            gameMode={selectedMode}
+            onStartGame={handleStartGame}
+            onBack={handleBack}
+          />
         ) : (
           /* AI Difficulty Selection */
           <motion.div
@@ -120,7 +166,7 @@ const MainMenu = () => {
               </div>
 
               <Button
-                onClick={() => setShowAIOptions(false)}
+                onClick={handleBack}
                 variant="secondary"
                 className="w-full"
               >

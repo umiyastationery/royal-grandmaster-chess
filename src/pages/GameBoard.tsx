@@ -6,7 +6,10 @@ import { Button } from '@/components/ui/button';
 import ChessBoard from '@/components/chess/ChessBoard';
 import GameStatus from '@/components/chess/GameStatus';
 import CapturedPieces from '@/components/chess/CapturedPieces';
+import SaveGameDialog from '@/components/game/SaveGameDialog';
+import LoadGameDialog from '@/components/game/LoadGameDialog';
 import { toast } from 'sonner';
+import { Save, FolderOpen } from 'lucide-react';
 
 const GameBoard = () => {
   const { state, dispatch } = useGame();
@@ -139,15 +142,36 @@ const GameBoard = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <Button
-            onClick={() => navigate('/menu')}
-            variant="outline"
-            className="royal-button"
-          >
-            ← Main Menu
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => navigate('/menu')}
+              variant="outline"
+              className="royal-button"
+            >
+              ← Main Menu
+            </Button>
+            
+            <SaveGameDialog>
+              <Button variant="outline" className="royal-button">
+                <Save className="w-4 h-4 mr-2" />
+                Save
+              </Button>
+            </SaveGameDialog>
+            
+            <LoadGameDialog>
+              <Button variant="outline" className="royal-button">
+                <FolderOpen className="w-4 h-4 mr-2" />
+                Load
+              </Button>
+            </LoadGameDialog>
+          </div>
           
-          <h1 className="text-3xl font-bold golden-text">Chess Master</h1>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold golden-text">Chess Master</h1>
+            <div className="text-sm text-muted-foreground mt-1">
+              {state.players.white} vs {state.players.black}
+            </div>
+          </div>
           
           <Button
             onClick={handleNewGame}
@@ -175,6 +199,7 @@ const GameBoard = () => {
               currentPlayer={state.currentPlayer}
               gameMode={state.gameMode}
               isAIThinking={isAIThinking}
+              players={state.players}
             />
             
             <ChessBoard

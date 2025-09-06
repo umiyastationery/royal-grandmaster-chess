@@ -24,6 +24,22 @@ export interface GameSettings {
   pieceStyle: 'classic' | 'modern' | 'futuristic';
 }
 
+export interface PlayerInfo {
+  name: string;
+  color: PieceColor;
+}
+
+export interface SavedGame {
+  id: string;
+  name: string;
+  timestamp: string;
+  gameState: GameState;
+  players: {
+    white: string;
+    black: string;
+  };
+}
+
 export interface GameState {
   board: (ChessPiece | null)[][];
   currentPlayer: PieceColor;
@@ -36,16 +52,33 @@ export interface GameState {
   settings: GameSettings;
   isGameStarted: boolean;
   lastMove: { from: Position; to: Position } | null;
+  players: {
+    white: string;
+    black: string;
+  };
+  // Save/Load functionality
+  castlingRights: {
+    whiteKingSide: boolean;
+    whiteQueenSide: boolean;
+    blackKingSide: boolean;
+    blackQueenSide: boolean;
+  };
+  enPassantTarget: Position | null;
+  halfMoveClock: number;
+  fullMoveNumber: number;
 }
 
 type GameAction =
-  | { type: 'START_GAME'; mode: GameMode; playerColor?: PieceColor }
+  | { type: 'START_GAME'; mode: GameMode; playerColor?: PieceColor; players?: { white: string; black: string } }
   | { type: 'SELECT_SQUARE'; position: Position }
   | { type: 'MOVE_PIECE'; from: Position; to: Position }
   | { type: 'SET_SETTINGS'; settings: Partial<GameSettings> }
   | { type: 'RESET_GAME' }
   | { type: 'SET_VALID_MOVES'; moves: Position[] }
-  | { type: 'SET_GAME_STATUS'; status: GameStatus };
+  | { type: 'SET_GAME_STATUS'; status: GameStatus }
+  | { type: 'SAVE_GAME'; saveName?: string }
+  | { type: 'LOAD_GAME'; gameState: GameState; players: { white: string; black: string } }
+  | { type: 'SET_PLAYERS'; players: { white: string; black: string } };
 
 const initialGameSettings: GameSettings = {
   soundEnabled: true,
@@ -91,17 +124,67 @@ const initialState: GameState = {
   moveHistory: [],
   settings: initialGameSettings,
   isGameStarted: false,
-  lastMove: null
+  lastMove: null,
+  players: {
+    white: 'Player 1',
+    black: 'Player 2'
+  },
+  castlingRights: {
+    whiteKingSide: true,
+    whiteQueenSide: true,
+    blackKingSide: true,
+    blackQueenSide: true
+  },
+  enPassantTarget: null,
+  halfMoveClock: 0,
+  fullMoveNumber: 1
+};
+
+// Save/Load Game utilities
+const saveGameToLocalStorage = (gameState: GameState, saveName?: string): string => {
+  const savedGames = getSavedGames();
+  const gameId = Date.now().toString();
+  const timestamp = new Date().toISOString();
+  const name = saveName || `Game ${new Date().toLocaleString()}`;
+  
+  const savedGame: SavedGame = {
+    id: gameId,
+    name,
+    timestamp,
+    gameState,
+    players: gameState.players
+  };
+  
+  savedGames.push(savedGame);
+  localStorage.setItem('chessmaster_saved_games', JSON.stringify(savedGames));
+  return name;
+};
+
+const getSavedGames = (): SavedGame[] => {
+  const saved = localStorage.getItem('chessmaster_saved_games');
+  return saved ? JSON.parse(saved) : [];
+};
+
+const deleteSavedGame = (gameId: string): void => {
+  const savedGames = getSavedGames().filter(game => game.id !== gameId);
+  localStorage.setItem('chessmaster_saved_games', JSON.stringify(savedGames));
 };
 
 const gameReducer = (state: GameState, action: GameAction): GameState => {
   switch (action.type) {
     case 'START_GAME':
+      const players = action.players || (
+        action.mode === 'pvp' 
+          ? { white: 'Player 1', black: 'Player 2' }
+          : { white: 'Player', black: 'Computer' }
+      );
+      
       return {
         ...initialState,
         gameMode: action.mode,
         isGameStarted: true,
-        settings: state.settings
+        settings: state.settings,
+        players
       };
       
     case 'SELECT_SQUARE':
@@ -193,6 +276,23 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
         settings: state.settings
       };
       
+    case 'SAVE_GAME':
+      const saveName = saveGameToLocalStorage(state, action.saveName);
+      return state; // Don't change state, just save to localStorage
+      
+    case 'LOAD_GAME':
+      return {
+        ...action.gameState,
+        settings: state.settings,
+        players: action.players
+      };
+      
+    case 'SET_PLAYERS':
+      return {
+        ...state,
+        players: action.players
+      };
+      
     default:
       return state;
   }
@@ -220,3 +320,6 @@ export const useGame = () => {
   }
   return context;
 };
+
+// Export utility functions for use in components
+export { getSavedGames, deleteSavedGame };
