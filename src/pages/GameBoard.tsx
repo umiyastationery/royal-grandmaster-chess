@@ -13,6 +13,17 @@ const GameBoard = () => {
   const navigate = useNavigate();
   const [isAIThinking, setIsAIThinking] = useState(false);
 
+  // Play welcome message when game starts
+  useEffect(() => {
+    if (state.isGameStarted && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance("This game was developed by Keval Patel");
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      utterance.volume = 0.7;
+      speechSynthesis.speak(utterance);
+    }
+  }, [state.isGameStarted]);
+
   // Handle AI moves
   useEffect(() => {
     if (state.currentPlayer === 'black' && 
