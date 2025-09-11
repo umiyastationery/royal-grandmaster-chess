@@ -239,10 +239,10 @@ const SplashScreen = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: 'easeOut' }}
-              className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full"
+              className="fixed bottom-8 left-0 right-0 w-full px-4"
             >
               <p 
-                className="text-sm md:text-base text-muted-foreground font-light tracking-wide text-center"
+                className="text-sm md:text-base text-muted-foreground font-light tracking-wide text-center mx-auto"
                 style={{
                   textShadow: '0 0 10px hsl(var(--muted-foreground) / 0.3)'
                 }}
