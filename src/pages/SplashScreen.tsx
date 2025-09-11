@@ -242,7 +242,7 @@ const SplashScreen = () => {
               className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full"
             >
               <p 
-                className="text-sm md:text-base text-muted-foreground font-light tracking-wide"
+                className="text-sm md:text-base text-muted-foreground font-light tracking-wide text-center"
                 style={{
                   textShadow: '0 0 10px hsl(var(--muted-foreground) / 0.3)'
                 }}
