@@ -259,18 +259,27 @@ const MainMenu = () => {
             transition={{ delay: 0.8, duration: 0.6 }}
             className="arcade-nav mx-auto max-w-md"
           >
-            <div className="arcade-nav-button group">
+            <div 
+              className="arcade-nav-button group cursor-pointer" 
+              onClick={() => navigate('/')}
+            >
               <Home className="w-6 h-6 text-white group-hover:text-yellow-200 transition-colors" />
             </div>
-            <div className="arcade-nav-button group">
+            <div 
+              className="arcade-nav-button group cursor-pointer"
+              onClick={() => navigate('/settings')}
+            >
               <Trophy className="w-6 h-6 text-white group-hover:text-yellow-200 transition-colors" />
             </div>
             <LoadGameDialog onGameLoaded={handleLoadGame}>
-              <div className="arcade-nav-button group">
+              <div className="arcade-nav-button group cursor-pointer">
                 <Store className="w-6 h-6 text-white group-hover:text-yellow-200 transition-colors" />
               </div>
             </LoadGameDialog>
-            <div className="arcade-nav-button group">
+            <div 
+              className="arcade-nav-button group cursor-pointer"
+              onClick={() => navigate('/rules')}
+            >
               <Clock className="w-6 h-6 text-white group-hover:text-yellow-200 transition-colors" />
             </div>
           </motion.div>
