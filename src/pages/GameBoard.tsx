@@ -10,6 +10,7 @@ import SaveGameDialog from '@/components/game/SaveGameDialog';
 import LoadGameDialog from '@/components/game/LoadGameDialog';
 import { toast } from 'sonner';
 import { Save, FolderOpen } from 'lucide-react';
+import { SoundEffects } from '@/utils/soundEffects';
 
 const GameBoard = () => {
   const { state, dispatch } = useGame();
@@ -50,7 +51,7 @@ const GameBoard = () => {
           
           // Play move sound
           if (state.settings.soundEnabled) {
-            // Sound would be played here
+            SoundEffects.playChessMoveThud(0.8);
           }
         }
         
@@ -101,7 +102,7 @@ const GameBoard = () => {
       
       // Play move sound
       if (state.settings.soundEnabled) {
-        // Sound would be played here
+        SoundEffects.playChessMoveThud(0.8);
       }
       
       return;
