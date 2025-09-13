@@ -2,6 +2,7 @@ import { GameStatus as Status, PieceColor, GameMode } from '@/contexts/GameConte
 import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { Crown, Zap, Users, Bot } from 'lucide-react';
+import PlayerName from '@/components/ui/PlayerName';
 
 interface GameStatusProps {
   status: Status;
@@ -22,12 +23,26 @@ const GameStatus = ({ status, currentPlayer, gameMode, isAIThinking, players }: 
     
     switch (status) {
       case 'check':
-        return `${currentPlayerName} King is in Check!`;
+        return (
+          <span>
+            <PlayerName 
+              name={currentPlayerName}
+              brandingClassName="text-amber-300/60"
+            /> King is in Check!
+          </span>
+        );
       case 'checkmate':
         const winnerName = players 
           ? (currentPlayer === 'white' ? players.black : players.white)
           : (currentPlayer === 'white' ? 'Black' : 'White');
-        return `Checkmate! ${winnerName} Wins!`;
+        return (
+          <span>
+            Checkmate! <PlayerName 
+              name={winnerName}
+              brandingClassName="text-amber-300/60"
+            /> Wins!
+          </span>
+        );
       case 'stalemate':
         return 'Stalemate - Draw!';
       case 'draw':
@@ -36,7 +51,14 @@ const GameStatus = ({ status, currentPlayer, gameMode, isAIThinking, players }: 
         if (isAIThinking && currentPlayer === 'black') {
           return 'AI is thinking...';
         }
-        return `${currentPlayerName}'s Turn`;
+        return (
+          <span>
+            <PlayerName 
+              name={currentPlayerName}
+              brandingClassName="text-amber-300/60"
+            />'s Turn
+          </span>
+        );
     }
   };
 
@@ -93,10 +115,16 @@ const GameStatus = ({ status, currentPlayer, gameMode, isAIThinking, players }: 
           <div className="flex justify-between mb-3 text-sm">
             <div className={`flex items-center gap-2 ${currentPlayer === 'white' ? 'text-accent font-semibold' : 'text-muted-foreground'}`}>
               <div className="w-3 h-3 rounded-full bg-gray-200 border border-gray-400"></div>
-              {players.white}
+              <PlayerName 
+                name={players.white} 
+                brandingClassName="text-amber-400/60"
+              />
             </div>
             <div className={`flex items-center gap-2 ${currentPlayer === 'black' ? 'text-accent font-semibold' : 'text-muted-foreground'}`}>
-              {players.black}
+              <PlayerName 
+                name={players.black} 
+                brandingClassName="text-amber-400/60"
+              />
               <div className="w-3 h-3 rounded-full bg-gray-800 border border-gray-400"></div>
             </div>
           </div>
