@@ -8,7 +8,6 @@ import GameStatus from '@/components/chess/GameStatus';
 import CapturedPieces from '@/components/chess/CapturedPieces';
 import SaveGameDialog from '@/components/game/SaveGameDialog';
 import LoadGameDialog from '@/components/game/LoadGameDialog';
-import PlayerName from '@/components/ui/PlayerName';
 import { toast } from 'sonner';
 import { Save, FolderOpen } from 'lucide-react';
 
@@ -68,10 +67,9 @@ const GameBoard = () => {
       const isStalemate = ChessEngine.isStalemate(state.board, state.currentPlayer);
       
       if (isCheckmate) {
-        const winnerColor = state.currentPlayer === 'white' ? 'black' : 'white';
-        const winnerName = winnerColor === 'white' ? state.players.white : state.players.black;
+        const winner = state.currentPlayer === 'white' ? 'Black' : 'White';
         dispatch({ type: 'SET_GAME_STATUS', status: 'checkmate' });
-        toast(`Checkmate! ${winnerName} (Powered by Kp's Creations) wins!`);
+        toast(`Checkmate! ${winner} wins!`);
       } else if (isStalemate) {
         dispatch({ type: 'SET_GAME_STATUS', status: 'stalemate' });
         toast('Stalemate! The game is a draw.');
@@ -170,16 +168,8 @@ const GameBoard = () => {
           
           <div className="text-center">
             <h1 className="text-3xl font-bold golden-text">Chess Master</h1>
-            <div className="text-sm text-muted-foreground mt-1 flex items-center justify-center gap-2">
-              <PlayerName 
-                name={state.players.white} 
-                brandingClassName="text-amber-400/50"
-              />
-              <span>vs</span>
-              <PlayerName 
-                name={state.players.black} 
-                brandingClassName="text-amber-400/50"
-              />
+            <div className="text-sm text-muted-foreground mt-1">
+              {state.players.white} vs {state.players.black}
             </div>
           </div>
           

@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { GameMode } from '@/contexts/GameContext';
-import PlayerName from '@/components/ui/PlayerName';
 
 interface PlayerSetupProps {
   gameMode: GameMode;
@@ -85,10 +84,7 @@ const PlayerSetup = ({ gameMode, onStartGame, onBack }: PlayerSetupProps) => {
             <div className="p-4 bg-muted/30 rounded-lg border border-accent/20">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">AI Opponent:</span>
-                <PlayerName 
-                  name={`AI (${aiDifficultyLabel})`}
-                  brandingClassName="text-amber-400/50"
-                />
+                <span className="font-semibold text-accent">AI ({aiDifficultyLabel})</span>
               </div>
             </div>
           )}

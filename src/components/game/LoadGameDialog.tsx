@@ -6,7 +6,6 @@ import { useGame, getSavedGames, deleteSavedGame, SavedGame } from '@/contexts/G
 import { toast } from 'sonner';
 import { FolderOpen, Trash2, Calendar, Users, Gamepad2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import PlayerName from '@/components/ui/PlayerName';
 
 interface LoadGameDialogProps {
   children: React.ReactNode;
@@ -93,17 +92,9 @@ const LoadGameDialog = ({ children, onGameLoaded }: LoadGameDialogProps) => {
                           <div className="flex items-center gap-2">
                             <Users className="w-4 h-4 text-muted-foreground" />
                             <span className="text-muted-foreground">Players:</span>
-                            <div className="flex items-center gap-2">
-                              <PlayerName 
-                                name={savedGame.players.white}
-                                brandingClassName="text-amber-400/50"
-                              />
-                              <span>vs</span>
-                              <PlayerName 
-                                name={savedGame.players.black}
-                                brandingClassName="text-amber-400/50"
-                              />
-                            </div>
+                            <span className="font-semibold text-foreground">
+                              {savedGame.players.white} vs {savedGame.players.black}
+                            </span>
                           </div>
                           
                           <div className="flex items-center gap-2">
@@ -124,13 +115,8 @@ const LoadGameDialog = ({ children, onGameLoaded }: LoadGameDialogProps) => {
                           
                           <div>
                             <span className="text-muted-foreground">Current Turn:</span>
-                            <span className="ml-2 capitalize">
-                              {savedGame.gameState.currentPlayer} (
-                              <PlayerName 
-                                name={savedGame.gameState.currentPlayer === 'white' ? savedGame.players.white : savedGame.players.black}
-                                brandingClassName="text-amber-400/50"
-                              />
-                              )
+                            <span className="ml-2 font-semibold text-foreground capitalize">
+                              {savedGame.gameState.currentPlayer} ({savedGame.gameState.currentPlayer === 'white' ? savedGame.players.white : savedGame.players.black})
                             </span>
                           </div>
                         </div>

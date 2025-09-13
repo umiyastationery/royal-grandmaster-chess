@@ -6,7 +6,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useGame } from '@/contexts/GameContext';
 import { toast } from 'sonner';
 import { Save } from 'lucide-react';
-import PlayerName from '@/components/ui/PlayerName';
 
 interface SaveGameDialogProps {
   children: React.ReactNode;
@@ -44,21 +43,11 @@ const SaveGameDialog = ({ children }: SaveGameDialogProps) => {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-muted-foreground">White:</span>
-              <span className="ml-2">
-                <PlayerName 
-                  name={state.players.white}
-                  brandingClassName="text-amber-400/50"
-                />
-              </span>
+              <span className="ml-2 font-semibold text-foreground">{state.players.white}</span>
             </div>
             <div>
               <span className="text-muted-foreground">Black:</span>
-              <span className="ml-2">
-                <PlayerName 
-                  name={state.players.black}
-                  brandingClassName="text-amber-400/50"
-                />
-              </span>
+              <span className="ml-2 font-semibold text-foreground">{state.players.black}</span>
             </div>
             <div>
               <span className="text-muted-foreground">Mode:</span>
